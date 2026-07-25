@@ -186,8 +186,8 @@ function finishRace(m,game,won,winnerIndex){const attempt=Math.max(1,initialTick
 function hideLoader(){const l=qs('#loadingScreen');if(!l)return;if(!state.theme.loadingScreen){l.remove();return}const text=l.querySelector('.muted');if(text)text.textContent=state.theme.loadingText||'Memuat...';setTimeout(()=>l.classList.add('hide'),250);setTimeout(()=>l.remove(),700)}
 /* ===== GOOGLE SHEETS REALTIME RACE HISTORY =====
    Setelah Code.gs dideploy, ganti URL di bawah dengan URL Web App /exec. */
-const RACE_API_URL='PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-const RACE_API_TOKEN='GANTI_DENGAN_TOKEN_RAHASIA_YANG_SAMA';
+const RACE_API_URL='https://script.google.com/macros/s/AKfycbwLPlY8jWv0BcATKyJziiH9nlZMXjYE2AD-CIuu1H_v1KXCJdfmRysBCorwClk9RMc/exec';
+const RACE_API_TOKEN='';
 let remoteRaceHistory=[];
 function raceApiReady(){return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(RACE_API_URL)}
 async function raceApi(action,data={}){
@@ -225,8 +225,8 @@ const BONUS_CATEGORIES=Object.freeze({
   coupon_combo:{label:'Coupon 4 – Saldo + Freechip Sportbook',unit:'Tiket',inputLabel:'Jumlah Tiket',icon:'⚽'}
 });
 const ADMIN2_ALLOWED_MENUS=new Set(['dashboard','members','tickets','activity','winners','account']);
-const SHARED_DATABASE_API_URL='PASTE_SHARED_DATABASE_API_URL_HERE';
-const SHARED_DATABASE_API_TOKEN='GANTI_DENGAN_TOKEN_SERVER';
+const SHARED_DATABASE_API_URL='https://script.google.com/macros/s/AKfycbwLPlY8jWv0BcATKyJziiH9nlZMXjYE2AD-CIuu1H_v1KXCJdfmRysBCorwClk9RMc/exec';
+const SHARED_DATABASE_API_TOKEN='';
 let remoteSyncTimer=null;
 let remoteSyncInFlight=false;
 
@@ -242,7 +242,7 @@ function sharedDatabaseReady(){
   return /^https:\/\/.+/i.test(SHARED_DATABASE_API_URL)&&!SHARED_DATABASE_API_URL.includes('PASTE_');
 }
 function databaseModeHTML(){
-  return `<div class="database-mode ${sharedDatabaseReady()?'online':''}"><span class="database-dot"></span><div><b>${sharedDatabaseReady()?'Database Bersama Aktif':'Mode Preview Browser'}</b><div class="muted tiny">${sharedDatabaseReady()?'Dua repository memakai endpoint yang sama.':'Pasang SHARED_DATABASE_API_URL untuk sinkronisasi lintas repository dan perangkat.'}</div></div></div>`;
+  return `<div class="database-mode ${sharedDatabaseReady()?'online':''}"><span class="database-dot"></span><div><b>${sharedDatabaseReady()?'Database Bersama Aktif':'Mode Preview Browser'}</b><div class="muted tiny">${sharedDatabaseReady()?'Tiga portal memakai endpoint yang sama.':'Pasang SHARED_DATABASE_API_URL untuk sinkronisasi lintas repository dan perangkat.'}</div></div></div>`;
 }
 function categoryMeta(key){return BONUS_CATEGORIES[key]||BONUS_CATEGORIES.ticket_balance}
 function bonusCategoryOptions(selected='ticket_balance'){
@@ -601,8 +601,8 @@ async function pushSharedDatabase(){
   remoteSyncInFlight=true;
   try{
     const res=await fetch(SHARED_DATABASE_API_URL,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'savePlatformState',token:SHARED_DATABASE_API_TOKEN,...remoteOperationalPayload()})
+      method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({action:'savePlatformState',token:SHARED_DATABASE_API_TOKEN,...remoteOperationalPayload()}),redirect:'follow',cache:'no-store'
     });
     if(!res.ok)throw new Error('Server database menolak penyimpanan.');
     const json=await res.json();if(json.success===false)throw new Error(json.message||'Penyimpanan server gagal.');
