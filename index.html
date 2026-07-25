@@ -27,6 +27,22 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
 @media(max-width:850px){.login-shell{grid-template-columns:1fr;min-height:100vh;border-radius:0}.login-page{padding:0}.login-visual{display:none}.login-panel{margin:0;border-radius:0;padding:28px 20px}.promo-grid,.grid.three,.permission-grid{grid-template-columns:repeat(2,1fr)}.preview-ui{grid-template-columns:1fr}.preview-branding{display:none}.hero-panel{min-height:500px}.form-grid,.grid.two{grid-template-columns:1fr}.field.wide,.form-actions{grid-column:1}.form-actions{justify-content:stretch}.form-actions .btn{flex:1}}
 @media(max-width:620px){.topbar{padding:0 11px}.content{padding:15px 11px}.search{width:auto;flex:1}.search span{display:none}.hide-mobile{display:none!important}.page-head,.card-head{flex-direction:column}.stats,.grid.four,.grid.three,.promo-grid,.permission-grid{grid-template-columns:1fr}.member-shell{padding:12px}.hero-panel{padding:23px;min-height:460px}.member-header .brand-copy span{display:none}.arena{height:410px}.crowd{font-size:20px;top:44%}.track{height:55px}.racer{font-size:39px}.finish{height:160px}.game-top{align-items:flex-start}.preview-frame,.preview-ui{min-height:480px}.asset-preview{height:135px}}
 .character-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}.character-choice{border:2px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;text-align:center}.character-choice.selected{border-color:var(--accent);box-shadow:0 0 24px rgba(34,211,238,.35)}.character-choice img{width:72px;height:72px;object-fit:contain;display:block;margin:auto}.race-arena{height:520px;perspective:900px}.race-lane{position:absolute;left:4%;right:4%;height:78px;border-bottom:2px dashed rgba(255,255,255,.42)}.race-lane.l1{top:28%}.race-lane.l2{top:43%}.race-lane.l3{top:58%}.race-lane.l4{top:73%}.race-avatar{position:absolute;left:5%;width:66px;height:66px;object-fit:contain;z-index:5;filter:drop-shadow(0 8px 5px rgba(0,0,0,.45));transition:transform .08s linear}.race-avatar.player{z-index:10;filter:drop-shadow(0 0 12px var(--accent)) drop-shadow(0 8px 5px rgba(0,0,0,.45))}.race-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-top:14px}.race-clock{font:900 2rem/1 var(--font);color:#fde047}.boost-btn{min-height:70px;font-size:1.15rem;touch-action:manipulation;user-select:none}.boost-meter{height:10px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}.boost-meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),#fde047);transition:width .1s}.prize-lines{font-size:1.35rem;line-height:1.55;white-space:pre-line}.loss-title{font-size:1.8rem;color:#fca5a5;font-weight:1000}.camera-focus{transform-origin:center;animation:cameraPulse 1.2s ease-in-out infinite}@keyframes cameraPulse{50%{filter:brightness(1.08)}}@media(max-width:720px){.character-grid{grid-template-columns:repeat(2,1fr)}.race-arena{height:450px}.race-avatar{width:52px;height:52px}.race-hud{grid-template-columns:1fr}.race-clock{text-align:center}.boost-btn{width:100%}}
+
+/* ===== BONUS TICKET & VOUCHER MANAGEMENT V4 ===== */
+.bonus-form-note{grid-column:1/-1;padding:14px 15px;border-radius:14px;border:1px solid color-mix(in srgb,var(--accent) 32%,transparent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.bonus-form-note b{display:block;margin-bottom:5px}
+.inventory-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-top:14px}
+.inventory-card{padding:14px;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.035)}
+.inventory-card strong{display:block;font-size:1.45rem;margin-top:7px}
+.category-label{display:inline-flex;align-items:center;gap:7px;max-width:100%;padding:6px 10px;border-radius:999px;border:1px solid color-mix(in srgb,var(--primary) 35%,transparent);background:color-mix(in srgb,var(--primary) 11%,transparent);font-size:.75rem;font-weight:900}
+.item-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.76rem;color:#cdd4f4}
+.database-mode{display:flex;align-items:center;gap:9px;padding:11px 13px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.035)}
+.database-dot{width:9px;height:9px;border-radius:50%;background:var(--warning);box-shadow:0 0 16px currentColor}
+.database-mode.online .database-dot{background:var(--success)}
+.access-denied-card{max-width:620px;margin:60px auto;text-align:center}
+@media(max-width:1100px){.inventory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.inventory-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -34,10 +50,10 @@ body:after{content:"";position:fixed;inset:0;pointer-events:none;background-imag
 <div id="app"></div><div class="toast-area" id="toastArea"></div>
 <script>
 'use strict';
-const PORTAL_MODE='admin_second';
+const DEFAULT_PORTAL_MODE='admin_second';const PORTAL_MODE=new URLSearchParams(location.search).get('portal')||DEFAULT_PORTAL_MODE;
 const APP_KEY='ceriabet_platform_v3';
 const LEGACY_KEY='ceriabet_single_file_v1';
-const SESSION_KEY='ceriabet_session_v3';
+const SESSION_KEY='ceriabet_session_v3_'+PORTAL_MODE;
 const DB_NAME='ceriabet_assets_v3';
 const DB_STORE='assets';
 const qs=(s,r=document)=>r.querySelector(s),qsa=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -151,7 +167,7 @@ function bindPermissions(){qs('#savePermissions').onclick=()=>{state.permissions
 function bindSettings(){qs('#settingsForm').onsubmit=e=>{e.preventDefault();state.settings.timezone=qs('#settingTimezone').value;state.settings.maintenance=qs('#settingMaintenance').value==='true';state.settings.maintenanceMessage=qs('#settingMessage').value;state.settings.maxImageMB=Math.min(10,Math.max(1,Number(qs('#maxImageMB').value)));state.settings.maxVideoMB=Math.min(50,Math.max(2,Number(qs('#maxVideoMB').value)));state.settings.sessionMinutes=Math.min(1440,Math.max(15,Number(qs('#sessionMinutes').value)));state.settings.brandLocked=qs('#brandLocked').checked;if(state.settings.brandLocked)state.permissions.admin_second.features.changeMainLogo=false;logAudit('UPDATE_SETTINGS',`Maintenance: ${state.settings.maintenance}`);saveState();toast('System Settings disimpan.','success')};qs('#exportData').onclick=()=>downloadJSON(state,'ceriabet-config-'+new Date().toISOString().slice(0,10)+'.json');qs('#backupTheme').onclick=()=>downloadJSON({theme:state.theme,themes:state.themes,themeHistory:state.themeHistory},'ceriabet-theme-backup-'+new Date().toISOString().slice(0,10)+'.json');qs('#importData').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.admins||!x.members||!x.theme)throw Error();state=migrateState(x);logAudit('IMPORT_CONFIG',f.name);saveState();toast('Konfigurasi berhasil diimport.','success');showPage('settings')}catch{toast('File konfigurasi tidak valid.','error')}};r.readAsText(f)};qs('#resetAll').onclick=()=>{if(confirm('Yakin reset seluruh data demo? Asset IndexedDB tidak otomatis dihapus.')){state=defaultState();saveState();saveSession(null);location.hash='';toast('Data demo direset.','success')}}}
 function downloadJSON(data,name){const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function bindAccount(){qs('#passwordForm').onsubmit=async e=>{e.preventDefault();const p=qs('#newPassword').value,c=qs('#confirmPassword').value;if(p!==c){toast('Konfirmasi password tidak sama.','error');return}if(p.length<10){toast('Password minimal 10 karakter.','error');return}const a=state.admins.find(x=>x.id===session.id);a.salt=uid();a.passwordHash=await pbkdf2(p,a.salt);logAudit('CHANGE_PASSWORD',a.email);saveState();toast('Password berhasil diperbarui.','success');e.target.reset()}}
-function renderMemberLogin(){document.body.className='';const t=state.theme,f=t.front,cfg=t.portal.member||defaultPortal();qs('#app').innerHTML=`<main class="member-shell"><div class="member-media">${cfg.backgroundType==='video'&&cfg.videoRef?assetTag(cfg.videoRef,'video'):cfg.backgroundType==='image'&&cfg.imageRef?assetTag(cfg.imageRef):'<div class="portal-fallback"></div>'}</div><div class="member-overlay" style="background:${esc(cfg.overlayColor)};opacity:${cfg.overlayOpacity}"></div><div class="member-content"><header class="member-header">${brandHTML('MEMBER GAMING HUB')}<button class="btn secondary" id="backAdmin">Login Admin</button></header><div class="hero-grid"><section class="card hero-panel">${f.bannerRef?`<div class="hero-banner">${assetTag(f.bannerRef)}</div>`:''}<div class="hero-gradient"></div><div class="hero-body">${f.gameLogoRef?assetTag(f.gameLogoRef,'image','brand-logo','style="width:92px;height:92px"'):''}<span class="badge active">LIVE EVENT</span><h1>${esc(f.title)}</h1><p>${esc(f.subtitle)}</p><div class="ticker"><span>${esc(f.ticker)}</span></div></div></section><section class="card member-login-card"><span class="badge active">MEMBER ACCESS</span><h2 style="font-size:2.2rem;margin:14px 0 8px">Masuk ke permainan</h2><p class="muted">Gunakan User ID aktif yang telah dibuat oleh admin.</p>${state.settings.maintenance?`<div class="notice error">${esc(state.settings.maintenanceMessage)}</div>`:`<form class="stack" id="memberLoginForm"><div class="field"><label>User ID</label><input class="input" id="memberUserIdLogin" placeholder="Masukkan User ID" autocomplete="off" required></div><button class="btn" style="${t.animation==='none'?'':`animation:${t.animation} 2s infinite`}">${esc(f.buttonText)}</button></form><div class="notice error hidden" id="memberLoginError" style="margin-top:14px"></div>`}<div class="muted small" style="margin-top:16px">Demo User ID: CERIABET001</div></section></div><div class="promo-grid"><div class="card promo-card">${f.thumbnailRef?assetTag(f.thumbnailRef):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.eventTitle)}</h3><p class="muted">${esc(f.eventText)}</p></div></div><div class="card promo-card">${f.bonusImageRef?assetTag(f.bonusImageRef):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.bonusTitle)}</h3><p class="muted">${esc(f.bonusText)}</p></div></div><div class="card promo-card">${f.sliderRefs.find(Boolean)?assetTag(f.sliderRefs.find(Boolean)):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.promoTitle)}</h3><p class="muted">${esc(f.promoText)}</p></div></div></div></div></main>`;qs('#backAdmin').onclick=()=>location.href=systemUrls().super;if(!state.settings.maintenance)qs('#memberLoginForm').onsubmit=e=>{e.preventDefault();const id=qs('#memberUserIdLogin').value.trim().toUpperCase(),m=state.members.find(x=>x.userId===id),err=qs('#memberLoginError');let msg='';if(!m)msg='User ID tidak ditemukan.';else if(m.status!=='active')msg='Akses member sedang nonaktif.';else if(m.expiresAt&&new Date(m.expiresAt)<new Date())msg='Masa aktif User ID sudah berakhir.';else if(Number(m.tickets)<=0)msg='Tiket bermain sudah habis.';else{const g=state.games.find(x=>x.id===m.gameId);if(!g||g.status!=='active')msg='Game sedang tidak aktif atau maintenance.'}if(msg){err.classList.remove('hidden');err.textContent=msg;return}saveSession({type:'member',id:m.id,userId:m.userId,name:m.name||m.userId,gameId:m.gameId,expiresAt:Date.now()+7200000});logActivity(`Member ${m.userId} login ke minigame.`,'login',m.userId);saveState();location.hash='game'};hydrateAssets(qs('#app'));hideLoader()}
+function renderMemberLogin(){document.body.className='';const t=state.theme,f=t.front,cfg=t.portal.member||defaultPortal();qs('#app').innerHTML=`<main class="member-shell"><div class="member-media">${cfg.backgroundType==='video'&&cfg.videoRef?assetTag(cfg.videoRef,'video'):cfg.backgroundType==='image'&&cfg.imageRef?assetTag(cfg.imageRef):'<div class="portal-fallback"></div>'}</div><div class="member-overlay" style="background:${esc(cfg.overlayColor)};opacity:${cfg.overlayOpacity}"></div><div class="member-content"><header class="member-header">${brandHTML('MEMBER GAMING HUB')}<button class="btn secondary" id="backAdmin">Login Admin</button></header><div class="hero-grid"><section class="card hero-panel">${f.bannerRef?`<div class="hero-banner">${assetTag(f.bannerRef)}</div>`:''}<div class="hero-gradient"></div><div class="hero-body">${f.gameLogoRef?assetTag(f.gameLogoRef,'image','brand-logo','style="width:92px;height:92px"'):''}<span class="badge active">LIVE EVENT</span><h1>${esc(f.title)}</h1><p>${esc(f.subtitle)}</p><div class="ticker"><span>${esc(f.ticker)}</span></div></div></section><section class="card member-login-card"><span class="badge active">MEMBER ACCESS</span><h2 style="font-size:2.2rem;margin:14px 0 8px">Masuk ke permainan</h2><p class="muted">Gunakan User ID aktif yang telah dibuat oleh admin.</p>${state.settings.maintenance?`<div class="notice error">${esc(state.settings.maintenanceMessage)}</div>`:`<form class="stack" id="memberLoginForm"><div class="field"><label>User ID</label><input class="input" id="memberUserIdLogin" placeholder="Masukkan User ID" autocomplete="off" required></div><button class="btn" style="${t.animation==='none'?'':`animation:${t.animation} 2s infinite`}">${esc(f.buttonText)}</button></form><div class="notice error hidden" id="memberLoginError" style="margin-top:14px"></div>`}<div class="muted small" style="margin-top:16px">Demo User ID: CERIABET001</div></section></div><div class="promo-grid"><div class="card promo-card">${f.thumbnailRef?assetTag(f.thumbnailRef):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.eventTitle)}</h3><p class="muted">${esc(f.eventText)}</p></div></div><div class="card promo-card">${f.bonusImageRef?assetTag(f.bonusImageRef):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.bonusTitle)}</h3><p class="muted">${esc(f.bonusText)}</p></div></div><div class="card promo-card">${f.sliderRefs.find(Boolean)?assetTag(f.sliderRefs.find(Boolean)):''}<div class="hero-gradient"></div><div class="promo-copy"><h3>${esc(f.promoTitle)}</h3><p class="muted">${esc(f.promoText)}</p></div></div></div></div></main>`;qs('#backAdmin').onclick=()=>location.href=DEFAULT_PORTAL_MODE==='admin_second'?systemUrls().admin2:systemUrls().super;if(!state.settings.maintenance)qs('#memberLoginForm').onsubmit=e=>{e.preventDefault();const id=qs('#memberUserIdLogin').value.trim().toUpperCase(),m=state.members.find(x=>x.userId===id),err=qs('#memberLoginError');let msg='';if(!m)msg='User ID tidak ditemukan.';else if(m.status!=='active')msg='Akses member sedang nonaktif.';else if(m.expiresAt&&new Date(m.expiresAt)<new Date())msg='Masa aktif User ID sudah berakhir.';else if(Number(m.tickets)<=0)msg='Tiket bermain sudah habis.';else{const g=state.games.find(x=>x.id===m.gameId);if(!g||g.status!=='active')msg='Game sedang tidak aktif atau maintenance.'}if(msg){err.classList.remove('hidden');err.textContent=msg;return}saveSession({type:'member',id:m.id,userId:m.userId,name:m.name||m.userId,gameId:m.gameId,expiresAt:Date.now()+7200000});logActivity(`Member ${m.userId} login ke minigame.`,'login',m.userId);saveState();location.hash='game'};hydrateAssets(qs('#app'));hideLoader()}
 function renderGame(){if(!session||session.type!=='member'){location.hash='';return}const m=state.members.find(x=>x.id===session.id);if(!m){saveSession(null);location.hash='';return}const g=state.games.find(x=>x.id===m.gameId),f=state.theme.front,bg=f.gameBackgroundRef||state.theme.portal.member.imageRef;document.body.className='';qs('#app').innerHTML=`<main class="game-shell"><div class="game-media">${bg?assetTag(bg):'<div class="portal-fallback"></div>'}</div><div class="game-overlay"></div><div class="game-top"><div>${f.gameLogoRef?assetTag(f.gameLogoRef,'image','brand-logo'):brandHTML(g?.name||'MINIGAME')}<div class="muted small" style="margin-top:5px">Member: ${esc(m.userId)}</div></div><div class="row wrap"><span class="badge active">🎟 Tiket: <b id="ticketCount">${m.tickets}</b></span><button class="btn secondary" id="exitGame">Keluar</button></div></div><section class="card arena-card">${f.cinematicRef?`<div class="asset-preview" style="height:170px;margin-bottom:14px">${assetTag(f.cinematicRef,'video')}</div>`:''}<div class="arena"><div class="sun"></div><div class="cloud"></div><div class="crowd">${['🙌','🎉','👏','🥳','🇮🇩','🙌','🎊','👏','🥳','🇮🇩'].map(x=>`<span>${x}</span>`).join('')}</div><div class="track t1"></div><div class="track t2"></div><div class="finish"></div><div class="racer r1" id="racer1">🧍‍♂️</div><div class="racer r2" id="racer2">🧍‍♂️</div></div><div class="game-status"><h2 id="gameTitle">Siap memulai balap karung?</h2><p class="muted" id="gameText">Setiap permainan menggunakan 1 tiket.</p><button class="btn success" id="startRace">MULAI BALAPAN</button></div></section></main><div class="result-modal hidden" id="resultModal"><div class="card result-box">${f.prizeIconRef?assetTag(f.prizeIconRef,'image','brand-logo','style="width:78px;height:78px;margin:auto"'):'<div style="font-size:64px">🏆</div>'}<h2>HASIL PERMAINAN</h2><p class="muted" id="winnerText"></p><div class="prize-value" id="prizeText"></div><button class="btn full" id="playAgain">MAIN LAGI</button><button class="btn secondary full" id="backMember" style="margin-top:9px">KEMBALI KE MEMBER</button></div></div>`;qs('#exitGame').onclick=()=>{saveSession(null);location.hash=''};qs('#startRace').onclick=startRace;qs('#playAgain').onclick=()=>{qs('#resultModal').classList.add('hidden');resetRace()};qs('#backMember').onclick=()=>{saveSession(null);location.hash=''};hydrateAssets(qs('#app'));hideLoader()}
 let raceTimer=null;function resetRace(){const r1=qs('#racer1'),r2=qs('#racer2');if(r1){r1.style.transform='translateX(0)';r2.style.transform='translateX(0)';r1.classList.remove('running');r2.classList.remove('running');qs('#gameTitle').textContent='Siap memulai balap karung?';qs('#gameText').textContent='Setiap permainan menggunakan 1 tiket.';qs('#startRace').disabled=false}}
 function startRace(){const m=state.members.find(x=>x.id===session.id);if(!m||m.tickets<=0){toast('Tiket sudah habis.','error');return}const game=state.games.find(x=>x.id===m.gameId),prizes=state.prizes.filter(p=>p.gameId===m.gameId&&p.quota>0&&p.weight>0);if(!prizes.length){toast('Hadiah aktif belum tersedia.','error');return}m.tickets-=1;qs('#ticketCount').textContent=m.tickets;qs('#startRace').disabled=true;qs('#gameTitle').textContent='BALAPAN DIMULAI!';qs('#gameText').textContent='Peserta sedang melompat menuju garis finis...';const r1=qs('#racer1'),r2=qs('#racer2');r1.classList.add('running');r2.classList.add('running');let p1=0,p2=0,ticks=0,max=Math.max(220,qs('.arena').clientWidth-145);clearInterval(raceTimer);raceTimer=setInterval(()=>{ticks++;p1+=Math.random()*18+7;p2+=Math.random()*18+7;r1.style.transform=`translateX(${Math.min(p1,max)}px)`;r2.style.transform=`translateX(${Math.min(p2,max)}px)`;if(ticks>60||p1>=max||p2>=max){clearInterval(raceTimer);r1.classList.remove('running');r2.classList.remove('running');finishRace(m,game,weightedPick(prizes),p1>=p2?'Peserta Ungu':'Peserta Emas')}},75)}
@@ -193,7 +209,441 @@ async function refreshRaceHistory(){
   catch(err){console.error('Sinkronisasi history:',err)}
 }
 setInterval(refreshRaceHistory,5000);refreshRaceHistory();
-saveState();route();
+
+/* ============================================================
+   CERIABET MEMBER MANAGEMENT & BONUS TICKET SYSTEM V4
+   - Super Admin: full access to every existing module.
+   - Admin Login 2: member operations only.
+   - Every ticket/voucher is stored as an individual record.
+   - Shared API is optional for static GitHub preview.
+   ============================================================ */
+const BONUS_CATEGORIES=Object.freeze({
+  ticket_balance:{label:'Tiket Saldo',unit:'Tiket',inputLabel:'Jumlah Tiket',icon:'🎟️'},
+  coupon_food:{label:'Coupon 1 – Voucher Makanan',unit:'Voucher',inputLabel:'Jumlah Voucher',icon:'🍽️'},
+  coupon_coffee:{label:'Coupon 2 – Voucher Kopi',unit:'Voucher',inputLabel:'Jumlah Voucher',icon:'☕'},
+  coupon_jersey:{label:'Coupon 3 – Jersey Bola Sesuai Request',unit:'Voucher',inputLabel:'Jumlah Voucher',icon:'👕'},
+  coupon_combo:{label:'Coupon 4 – Saldo + Freechip Sportbook',unit:'Tiket',inputLabel:'Jumlah Tiket',icon:'⚽'}
+});
+const ADMIN2_ALLOWED_MENUS=new Set(['dashboard','members','tickets','activity','winners','account']);
+const SHARED_DATABASE_API_URL='PASTE_SHARED_DATABASE_API_URL_HERE';
+const SHARED_DATABASE_API_TOKEN='GANTI_DENGAN_TOKEN_SERVER';
+let remoteSyncTimer=null;
+let remoteSyncInFlight=false;
+
+
+function systemUrls(){
+  const current=rootUrl();
+  const superUrl=DEFAULT_PORTAL_MODE==='super_admin'?current:'https://zaramanis1233-wq.github.io/RAJA-BALAP-KARUNG-SULTAN/';
+  const admin2Url=DEFAULT_PORTAL_MODE==='admin_second'?current:'https://zaramanis1233-wq.github.io/RAJA-BALAP-KARUNG-SULTAN-admin2-login/';
+  return{super:superUrl,admin2:admin2Url,member:`${current}?portal=member`};
+}
+
+function sharedDatabaseReady(){
+  return /^https:\/\/.+/i.test(SHARED_DATABASE_API_URL)&&!SHARED_DATABASE_API_URL.includes('PASTE_');
+}
+function databaseModeHTML(){
+  return `<div class="database-mode ${sharedDatabaseReady()?'online':''}"><span class="database-dot"></span><div><b>${sharedDatabaseReady()?'Database Bersama Aktif':'Mode Preview Browser'}</b><div class="muted tiny">${sharedDatabaseReady()?'Dua repository memakai endpoint yang sama.':'Pasang SHARED_DATABASE_API_URL untuk sinkronisasi lintas repository dan perangkat.'}</div></div></div>`;
+}
+function categoryMeta(key){return BONUS_CATEGORIES[key]||BONUS_CATEGORIES.ticket_balance}
+function bonusCategoryOptions(selected='ticket_balance'){
+  return Object.entries(BONUS_CATEGORIES).map(([key,x])=>`<option value="${key}" ${key===selected?'selected':''}>${x.label}</option>`).join('');
+}
+function bonusItemsFor(memberId,category,status){
+  return (state.bonusItems||[]).filter(x=>x.memberId===memberId&&(!category||x.category===category)&&(!status||x.status===status));
+}
+function availableBonusCount(member){
+  if(!member)return 0;
+  return bonusItemsFor(member.id,member.bonusCategory,'available').length;
+}
+function syncLegacyTicketCounter(member){
+  if(member)member.tickets=availableBonusCount(member);
+}
+function ensureBonusSystem(){
+  state.bonusItems=Array.isArray(state.bonusItems)?state.bonusItems:[];
+  state.bonusHistory=Array.isArray(state.bonusHistory)?state.bonusHistory:[];
+  state.members=Array.isArray(state.members)?state.members:[];
+  state.members.forEach(member=>{
+    member.bonusCategory=BONUS_CATEGORIES[member.bonusCategory]?member.bonusCategory:'ticket_balance';
+    member.status=member.status||'active';
+    if(!member.bonusInventoryMigrated){
+      const legacy=Math.max(0,Math.floor(Number(member.tickets)||0));
+      if(!state.bonusItems.some(x=>x.memberId===member.id)&&legacy>0){
+        const batchId=uid();
+        for(let i=0;i<legacy;i++){
+          state.bonusItems.push({
+            id:uid(),code:`LEG-${String(i+1).padStart(4,'0')}-${member.id}`,
+            batchId,memberId:member.id,userId:member.userId,
+            category:member.bonusCategory,status:'available',
+            createdAt:member.createdAt||now(),createdBy:'System Migration',
+            usedAt:'',usedBy:'',rewardText:''
+          });
+        }
+      }
+      member.bonusInventoryMigrated=true;
+    }
+    syncLegacyTicketCounter(member);
+  });
+  state.schemaVersion=4;
+}
+function assertMemberOperationalAccess(){
+  const allowed=session?.role==='super_admin'||session?.role==='admin_second';
+  if(!allowed){
+    toast('Akses ditolak. Anda tidak memiliki izin untuk mengakses fitur ini.','error');
+    return false;
+  }
+  return true;
+}
+function permitted(key){
+  if(session?.role==='super_admin')return true;
+  return session?.role==='admin_second'&&ADMIN2_ALLOWED_MENUS.has(key);
+}
+function hasFeature(name){
+  if(session?.role==='super_admin')return true;
+  return session?.role==='admin_second'&&['manageMembers','manageBonusInventory','viewMemberHistory'].includes(name);
+}
+function showPage(page){
+  const key=navItems.find(x=>x[0]===page)?.[3]||page;
+  if(!permitted(key)){
+    toast('Akses ditolak. Anda tidak memiliki izin untuk mengakses fitur ini.','error');
+    page='overview';currentPage='overview';
+  }
+  const fn=pages[page]||pages.overview;
+  qs('#pageHost').innerHTML=fn();
+  bindPage(page);
+  hydrateAssets(qs('#pageHost'));
+}
+function issueBonusItems(member,category,quantity){
+  if(!member)throw new Error('Data member tidak ditemukan.');
+  if(!BONUS_CATEGORIES[category])throw new Error('Kategori Bonus tidak valid.');
+  const qty=Number(quantity);
+  if(!Number.isInteger(qty)||qty<1)throw new Error('Jumlah tiket/voucher minimal 1.');
+  if(qty>10000)throw new Error('Maksimal 10.000 item dalam satu proses.');
+  const before=(state.bonusItems||[]).length;
+  const batchId=uid(),actor=session?.name||'System',meta=categoryMeta(category);
+  for(let i=0;i<qty;i++){
+    state.bonusItems.push({
+      id:uid(),
+      code:`${category.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5)}-${Date.now().toString(36).toUpperCase()}-${String(i+1).padStart(4,'0')}-${Math.random().toString(36).slice(2,6).toUpperCase()}`,
+      batchId,memberId:member.id,userId:member.userId,category,status:'available',
+      createdAt:now(),createdBy:actor,usedAt:'',usedBy:'',rewardText:''
+    });
+  }
+  const created=state.bonusItems.length-before;
+  if(created!==qty){
+    state.bonusItems=state.bonusItems.filter(x=>x.batchId!==batchId);
+    throw new Error(`Pembuatan gagal: diminta ${qty}, tercipta ${created}.`);
+  }
+  member.bonusCategory=category;
+  syncLegacyTicketCounter(member);
+  state.bonusHistory.unshift({
+    id:uid(),action:'ISSUE',batchId,memberId:member.id,userId:member.userId,
+    category,quantity:qty,itemCode:'',rewardText:`${qty} ${meta.unit}`,
+    remaining:availableBonusCount(member),actor,createdAt:now()
+  });
+  logActivity(`${qty} ${meta.unit} ${meta.label} dibuat untuk ${member.userId}.`,'ticket',actor);
+  logAudit('ISSUE_BONUS_ITEMS',`${member.userId} · ${meta.label} · ${qty} item`);
+  return created;
+}
+function rewardForCategory(member,category){
+  const usedBefore=bonusItemsFor(member.id,category,'used').length;
+  if(category==='ticket_balance'){
+    const amount=usedBefore%2===0?10000:5000;
+    return {text:`Saldo ${rupiah(amount)}`,value:amount,type:'Saldo'};
+  }
+  if(category==='coupon_food')return{text:'Voucher Makanan',value:0,type:'Voucher'};
+  if(category==='coupon_coffee')return{text:'Voucher Kopi',value:0,type:'Voucher'};
+  if(category==='coupon_jersey')return{text:'Jersey Bola Sesuai Request',value:0,type:'Voucher'};
+  return{text:'Saldo\nFreechip Sportbook',value:0,type:'Saldo + Freechip Sportbook'};
+}
+function consumeBonusItem(member){
+  const item=bonusItemsFor(member.id,member.bonusCategory,'available')
+    .sort((a,b)=>new Date(a.createdAt)-new Date(b.createdAt))[0];
+  if(!item)return null;
+  const reward=rewardForCategory(member,member.bonusCategory);
+  item.status='used';item.usedAt=now();item.usedBy=member.userId;item.rewardText=reward.text;
+  syncLegacyTicketCounter(member);
+  state.bonusHistory.unshift({
+    id:uid(),action:'USE',batchId:item.batchId,memberId:member.id,userId:member.userId,
+    category:item.category,quantity:1,itemCode:item.code,rewardText:reward.text,
+    remaining:availableBonusCount(member),actor:member.userId,createdAt:now()
+  });
+  return{item,reward,remaining:availableBonusCount(member)};
+}
+function revokeMemberInventory(member){
+  const actor=session?.name||'System';
+  bonusItemsFor(member.id,'','available').forEach(x=>{x.status='revoked';x.usedAt=now();x.usedBy=actor});
+  state.bonusHistory.unshift({
+    id:uid(),action:'REVOKE_MEMBER',batchId:'',memberId:member.id,userId:member.userId,
+    category:member.bonusCategory,quantity:0,itemCode:'',rewardText:'Member dihapus; item aktif dibatalkan.',
+    remaining:0,actor,createdAt:now()
+  });
+}
+function membersTable(){
+  const rows=state.members.map(m=>{
+    const meta=categoryMeta(m.bonusCategory),available=availableBonusCount(m);
+    const issued=bonusItemsFor(m.id,m.bonusCategory).filter(x=>x.status!=='revoked').length;
+    const used=bonusItemsFor(m.id,m.bonusCategory,'used').length;
+    return `<tr><td><b>${esc(m.userId)}</b></td><td><span class="category-label">${meta.icon} ${esc(meta.label)}</span></td><td><b>${available}</b> ${meta.unit}</td><td>${issued}</td><td>${used}</td><td><span class="badge ${m.status==='active'?'active':'danger'}">${esc(m.status)}</span></td><td><div class="table-actions"><button class="chip" data-edit-member="${m.id}">Edit / Tambah</button><button class="chip danger" data-delete-member="${m.id}">Hapus</button></div></td></tr>`;
+  }).join('');
+  return table(['User ID','Kategori Bonus','Tersedia','Dibuat','Terpakai','Status','Aksi'],rows);
+}
+function ticketsTable(){
+  const rows=[...(state.bonusItems||[])].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).slice(0,2000).map(x=>{
+    const meta=categoryMeta(x.category);
+    const badge=x.status==='available'?'active':x.status==='used'?'warn':'danger';
+    return `<tr><td><span class="item-code">${esc(x.code)}</span></td><td><b>${esc(x.userId||'-')}</b></td><td>${esc(meta.label)}</td><td><span class="badge ${badge}">${esc(x.status)}</span></td><td>${fmtDate(x.createdAt)}</td><td>${x.usedAt?fmtDate(x.usedAt):'-'}</td><td>${esc(x.rewardText||'-')}</td></tr>`;
+  }).join('');
+  return table(['Kode Item','User ID','Kategori','Status','Dibuat','Digunakan','Hadiah'],rows);
+}
+function bonusHistoryTable(){
+  const rows=(state.bonusHistory||[]).slice(0,1000).map(x=>`<tr><td>${fmtDate(x.createdAt)}</td><td><span class="badge">${esc(x.action)}</span></td><td><b>${esc(x.userId)}</b></td><td>${esc(categoryMeta(x.category).label)}</td><td>${Number(x.quantity)||0}</td><td>${esc(x.itemCode||'-')}</td><td>${esc(x.rewardText||'-')}</td><td>${Number(x.remaining)||0}</td><td>${esc(x.actor||'-')}</td></tr>`).join('');
+  return table(['Waktu','Aksi','User ID','Kategori','Jumlah','Kode Item','Detail/Hadiah','Sisa','Pelaku'],rows);
+}
+function inventoryStatsHTML(){
+  return `<div class="inventory-grid">${Object.entries(BONUS_CATEGORIES).map(([key,x])=>{
+    const available=(state.bonusItems||[]).filter(i=>i.category===key&&i.status==='available').length;
+    return `<div class="inventory-card"><span>${x.icon} ${esc(x.label)}</span><strong>${available}</strong><div class="muted tiny">${x.unit} tersedia</div></div>`;
+  }).join('')}</div>`;
+}
+pages.members=()=>pageHead('Member Management','Daftarkan User ID dan buat tiket/voucher otomatis sesuai Kategori Bonus.')+
+`<div class="grid two"><div class="card"><div class="card-head"><div><h3>Buat / Edit Member</h3><div class="muted small">Jumlah yang dimasukkan akan dibuat sebagai record individual.</div></div><span class="badge active">EXACT QUANTITY</span></div>
+<form id="memberForm" class="form-grid"><input type="hidden" id="memberId">
+<div class="field"><label>User ID</label><input class="input" id="memberUserId" maxlength="40" placeholder="MEMBER001" required></div>
+<div class="field"><label>Kategori Bonus</label><select class="select" id="memberBonusCategory">${bonusCategoryOptions()}</select></div>
+<div class="field wide"><label id="memberQuantityLabel">Jumlah Tiket</label><input class="input" id="memberQuantity" type="number" min="1" max="10000" step="1" value="1" required><div class="field-help" id="memberQuantityHelp"></div></div>
+<div class="bonus-form-note"><b id="memberCategoryTitle">🎟️ Tiket Saldo</b><span class="muted small" id="memberCategoryDescription">Sistem membuat tiket saldo satu per satu dan menghubungkannya ke User ID.</span></div>
+<div class="form-actions"><button class="btn secondary" type="reset" id="memberReset">Reset</button><button class="btn">SIMPAN & BUAT ITEM</button></div>
+</form></div>
+<div class="card"><h3>Aturan Operasional</h3><div class="notice">Member hanya dapat login menggunakan User ID terdaftar. Saat menang, tepat 1 tiket/voucher kategori aktif digunakan dan riwayat hadiah disimpan.</div><div style="margin-top:14px">${databaseModeHTML()}</div>${linkCard('MB','Login Member',systemUrls().member)}</div></div>
+<div class="card" style="margin-top:16px"><div class="card-head"><h3>Ringkasan Inventory</h3><span class="badge">${(state.bonusItems||[]).filter(x=>x.status==='available').length} tersedia</span></div>${inventoryStatsHTML()}</div>
+<div class="card" style="margin-top:16px"><div class="card-head"><h3>Data Member</h3><span class="badge">${state.members.length} member</span></div>${membersTable()}</div></section>`;
+pages.tickets=()=>pageHead('Tiket, Voucher & Bonus History','Setiap item memiliki kode unik dan hanya dapat digunakan satu kali.')+
+`<div class="card"><div class="card-head"><h3>Seluruh Item</h3><span class="badge">${(state.bonusItems||[]).length} record</span></div>${ticketsTable()}</div>
+<div class="card" style="margin-top:16px"><div class="card-head"><h3>Riwayat Pembuatan & Penggunaan</h3><span class="badge">${(state.bonusHistory||[]).length} aktivitas</span></div>${bonusHistoryTable()}</div></section>`;
+function updateBonusFormUI(){
+  const select=qs('#memberBonusCategory');if(!select)return;
+  const meta=categoryMeta(select.value);
+  qs('#memberQuantityLabel').textContent=meta.inputLabel;
+  qs('#memberQuantityHelp').textContent=`Input 1 membuat tepat 1 ${meta.unit}; input 30 membuat tepat 30 ${meta.unit}.`;
+  qs('#memberCategoryTitle').textContent=`${meta.icon} ${meta.label}`;
+  const desc={
+    ticket_balance:'Hadiah kemenangan mengikuti urutan Saldo Rp10.000, Rp5.000, Rp10.000, lalu berulang.',
+    coupon_food:'Setiap kemenangan menggunakan 1 voucher dan menampilkan Voucher Makanan.',
+    coupon_coffee:'Setiap kemenangan menggunakan 1 voucher dan menampilkan Voucher Kopi.',
+    coupon_jersey:'Setiap kemenangan menggunakan 1 voucher dan menampilkan Jersey Bola Sesuai Request.',
+    coupon_combo:'Setiap kemenangan menggunakan 1 tiket dan menampilkan Saldo + Freechip Sportbook.'
+  };
+  qs('#memberCategoryDescription').textContent=desc[select.value];
+}
+function bindMembers(){
+  if(!assertMemberOperationalAccess())return;
+  qs('#memberBonusCategory').onchange=updateBonusFormUI;
+  qs('#memberForm').onreset=()=>setTimeout(updateBonusFormUI,0);
+  updateBonusFormUI();
+  qs('#memberForm').onsubmit=e=>{
+    e.preventDefault();
+    if(!assertMemberOperationalAccess())return;
+    const id=qs('#memberId').value;
+    const userId=qs('#memberUserId').value.trim().toUpperCase();
+    const category=qs('#memberBonusCategory').value;
+    const quantity=Number(qs('#memberQuantity').value);
+    if(!/^[A-Z0-9._-]{3,40}$/.test(userId)){toast('User ID minimal 3 karakter dan hanya boleh memakai huruf, angka, titik, garis bawah, atau strip.','error');return}
+    if(state.members.some(m=>m.userId===userId&&m.id!==id)){toast('User ID sudah digunakan.','error');return}
+    try{
+      let member;
+      if(id){
+        member=state.members.find(m=>m.id===id);
+        if(!member)throw new Error('Member tidak ditemukan.');
+        member.userId=userId;member.bonusCategory=category;member.status='active';
+        state.bonusItems.filter(x=>x.memberId===member.id).forEach(x=>x.userId=userId);
+      }else{
+        member={id:uid(),userId,bonusCategory:category,tickets:0,status:'active',gameId:state.games[0]?.id||'',createdAt:now(),expiresAt:'',notes:'',bonusInventoryMigrated:true};
+        state.members.push(member);
+      }
+      const created=issueBonusItems(member,category,quantity);
+      saveState();
+      showPage('members');
+      toast(`${created} ${categoryMeta(category).unit} berhasil dibuat untuk ${userId}.`,'success');
+    }catch(err){toast(err.message||'Data member gagal disimpan.','error')}
+  };
+  qsa('[data-edit-member]').forEach(b=>b.onclick=()=>{
+    if(!assertMemberOperationalAccess())return;
+    const m=state.members.find(x=>x.id===b.dataset.editMember);if(!m)return;
+    qs('#memberId').value=m.id;qs('#memberUserId').value=m.userId;
+    qs('#memberBonusCategory').value=m.bonusCategory;qs('#memberQuantity').value=1;
+    updateBonusFormUI();scrollTo({top:0,behavior:'smooth'});
+  });
+  qsa('[data-delete-member]').forEach(b=>b.onclick=()=>{
+    if(!assertMemberOperationalAccess())return;
+    const m=state.members.find(x=>x.id===b.dataset.deleteMember);if(!m)return;
+    if(confirm(`Hapus member ${m.userId}? Tiket/voucher aktif akan dibatalkan, tetapi riwayat tetap disimpan.`)){
+      revokeMemberInventory(m);
+      state.members=state.members.filter(x=>x.id!==m.id);
+      logActivity(`Member ${m.userId} dihapus.`,'member',session?.name||'System');
+      logAudit('DELETE_MEMBER',m.userId);saveState();showPage('members');
+      toast('Member dihapus dan inventory aktif dibatalkan.','success');
+    }
+  });
+}
+function renderMemberLogin(){
+  ensureBonusSystem();
+  document.body.className='';const t=state.theme,f=t.front,cfg=t.portal.member||defaultPortal();
+  qs('#app').innerHTML=`<main class="member-shell"><div class="member-media">${cfg.backgroundType==='video'&&cfg.videoRef?assetTag(cfg.videoRef,'video'):cfg.backgroundType==='image'&&cfg.imageRef?assetTag(cfg.imageRef):'<div class="portal-fallback"></div>'}</div><div class="member-overlay" style="background:${esc(cfg.overlayColor)};opacity:${cfg.overlayOpacity}"></div><div class="member-content"><header class="member-header">${brandHTML('MEMBER GAMING HUB')}<button class="btn secondary" id="backAdmin">Login Admin</button></header><div class="hero-grid"><section class="card hero-panel">${f.bannerRef?`<div class="hero-banner">${assetTag(f.bannerRef)}</div>`:''}<div class="hero-gradient"></div><div class="hero-body">${f.gameLogoRef?assetTag(f.gameLogoRef,'image','brand-logo','style="width:92px;height:92px"'):''}<span class="badge active">LIVE EVENT</span><h1>${esc(f.title)}</h1><p>${esc(f.subtitle)}</p><div class="ticker"><span>${esc(f.ticker)}</span></div></div></section><section class="card member-login-card"><span class="badge active">MEMBER ACCESS</span><h2 style="font-size:2.2rem;margin:14px 0 8px">Masuk ke permainan</h2><p class="muted">Hanya User ID yang telah didaftarkan Admin atau Super Admin yang dapat masuk.</p>${state.settings.maintenance?`<div class="notice error">${esc(state.settings.maintenanceMessage)}</div>`:`<form class="stack" id="memberLoginForm"><div class="field"><label>User ID</label><input class="input" id="memberUserIdLogin" placeholder="Masukkan User ID" autocomplete="off" required></div><button class="btn" style="${t.animation==='none'?'':`animation:${t.animation} 2s infinite`}">${esc(f.buttonText)}</button></form><div class="notice error hidden" id="memberLoginError" style="margin-top:14px"></div>`}</section></div></div></main>`;
+  qs('#backAdmin').onclick=()=>location.href=systemUrls().super;
+  if(!state.settings.maintenance)qs('#memberLoginForm').onsubmit=e=>{
+    e.preventDefault();
+    const id=qs('#memberUserIdLogin').value.trim().toUpperCase();
+    const m=state.members.find(x=>x.userId===id),err=qs('#memberLoginError');
+    let msg='';
+    if(!m)msg='User ID tidak ditemukan.';
+    else if(m.status!=='active')msg='Akses member sedang nonaktif.';
+    else if(m.expiresAt&&new Date(m.expiresAt)<new Date())msg='Masa aktif User ID sudah berakhir.';
+    else{const g=state.games.find(x=>x.id===m.gameId);if(!g||g.status!=='active')msg='Game sedang tidak aktif atau maintenance.'}
+    if(msg){err.classList.remove('hidden');err.textContent=msg;return}
+    saveSession({type:'member',id:m.id,userId:m.userId,name:m.userId,gameId:m.gameId,expiresAt:Date.now()+7200000});
+    logActivity(`Member ${m.userId} login ke minigame.`,'login',m.userId);saveState();location.hash='game';
+  };
+  hydrateAssets(qs('#app'));hideLoader();
+}
+function renderGame(){
+  ensureBonusSystem();
+  if(!session||session.type!=='member'){location.hash='';return}
+  const m=state.members.find(x=>x.id===session.id);
+  if(!m){saveSession(null);location.hash='';return}
+  const g=state.games.find(x=>x.id===m.gameId),f=state.theme.front,bg=f.gameBackgroundRef||state.theme.portal.member.imageRef,cfg=state.raceConfig;
+  const meta=categoryMeta(m.bonusCategory),available=availableBonusCount(m);
+  document.body.className='';
+  qs('#app').innerHTML=`<main class="game-shell"><div class="game-media">${bg?assetTag(bg):'<div class="portal-fallback"></div>'}</div><div class="game-overlay"></div><div class="game-top"><div>${f.gameLogoRef?assetTag(f.gameLogoRef,'image','brand-logo'):brandHTML(g?.name||'MINIGAME')}<div class="muted small">Member: ${esc(m.userId)} · ${esc(meta.label)}</div></div><div class="row wrap"><span class="badge active">${meta.icon} ${meta.unit}: <b id="ticketCount">${available}</b></span><button class="btn secondary" id="exitGame">Keluar</button></div></div><section class="card arena-card"><div id="selectionPanel"><h2>Pilih 1 karakter kamu</h2><p class="muted">Tiket/voucher hanya digunakan ketika kamu menang dan hadiah berhasil diberikan.</p><div class="character-grid">${cfg.characters.map((c,i)=>`<button class="character-choice ${i===0?'selected':''}" data-racer="${i}">${racerVisual(c)}<b>${esc(c.name)}</b></button>`).join('')}</div><button class="btn success full" id="startRace">MULAI BALAPAN 12 DETIK</button></div><div class="arena race-arena hidden" id="raceArena"><div class="crowd">${['🙌','🎉','👏','🥳','🇮🇩','🙌','🎊','👏'].map(x=>`<span>${x}</span>`).join('')}</div><div class="finish"></div>${[0,1,2,3].map(i=>`<div class="race-lane l${i+1}"></div><div class="race-avatar" id="raceAvatar${i}" style="top:${25+i*15}%">${racerVisual(cfg.characters[i])}</div>`).join('')}</div><div class="race-hud hidden" id="raceHud"><div><b>BOOST</b><div class="boost-meter"><span id="boostMeter"></span></div><small id="boostCount">0 dorongan</small></div><button class="btn success boost-btn" id="boostBtn">⚡ DORONG / BOOST</button><div class="race-clock" id="raceClock">12.0</div></div><div class="game-status"><h2 id="gameTitle">Siap menjadi juara?</h2><p class="muted" id="gameText">${available>0?`Tersedia ${available} ${meta.unit}.`:`${meta.unit} habis. Hubungi Admin untuk penambahan.`}</p></div></section></main><div class="result-modal hidden" id="resultModal"><div class="card result-box"><div style="font-size:64px" id="resultIcon">🎁</div><h2 id="resultTitle">HASIL PERMAINAN</h2><p class="muted" id="winnerText"></p><div class="prize-lines" id="prizeText"></div><button class="btn full" id="playAgain">MAIN LAGI</button><button class="btn secondary full" id="backMember" style="margin-top:9px">KEMBALI KE MEMBER</button></div></div>`;
+  qsa('[data-racer]').forEach(b=>b.onclick=()=>{selectedRacer=Number(b.dataset.racer);qsa('[data-racer]').forEach(x=>x.classList.toggle('selected',x===b))});
+  qs('#startRace').onclick=startRace;qs('#boostBtn').onclick=doBoost;
+  qs('#playAgain').onclick=()=>{qs('#resultModal').classList.add('hidden');resetRace()};
+  qs('#exitGame').onclick=qs('#backMember').onclick=()=>{saveSession(null);location.hash=''};
+  hydrateAssets(qs('#app'));hideLoader();
+}
+function resetRace(){
+  raceActive=false;racePositions=[0,0,0,0];boosts=0;
+  qsa('.race-avatar').forEach(x=>{x.style.transform='translateX(0)';x.classList.remove('player','camera-focus')});
+  qs('#selectionPanel')?.classList.remove('hidden');qs('#raceArena')?.classList.add('hidden');qs('#raceHud')?.classList.add('hidden');
+  const m=state.members.find(x=>x.id===session?.id),meta=categoryMeta(m?.bonusCategory);
+  if(qs('#gameTitle'))qs('#gameTitle').textContent='Pilih karakter untuk permainan berikutnya';
+  if(qs('#gameText'))qs('#gameText').textContent=m?`Tersedia ${availableBonusCount(m)} ${meta.unit}.`:'';
+  if(qs('#boostMeter'))qs('#boostMeter').style.width='0%';
+  if(qs('#boostCount'))qs('#boostCount').textContent='0 dorongan';
+}
+function startRace(){
+  const m=state.members.find(x=>x.id===session?.id);
+  if(!m||availableBonusCount(m)<=0){toast('Tiket/Voucher sudah habis. Hubungi Admin.','error');return}
+  if(raceActive)return;
+  qs('#selectionPanel').classList.add('hidden');qs('#raceArena').classList.remove('hidden');qs('#raceHud').classList.remove('hidden');
+  qs(`#raceAvatar${selectedRacer}`).classList.add('player','camera-focus');
+  raceActive=true;boosts=0;racePositions=[0,0,0,0];raceStartAt=performance.now();
+  const duration=(Number(state.raceConfig.duration)||12)*1000,max=Math.max(250,qs('#raceArena').clientWidth-145);
+  clearInterval(raceTimer);
+  raceTimer=setInterval(()=>{
+    const elapsed=performance.now()-raceStartAt,remain=Math.max(0,duration-elapsed);
+    qs('#raceClock').textContent=(remain/1000).toFixed(1);
+    for(let i=0;i<4;i++){
+      if(i!==selectedRacer)racePositions[i]+=.62+Math.random()*.48;
+      const pos=Math.min(max,racePositions[i]/100*max);
+      qs(`#raceAvatar${i}`).style.transform=`translateX(${pos}px) scale(${i===selectedRacer?1.1:1})`;
+    }
+    if(remain<=0){
+      clearInterval(raceTimer);raceActive=false;
+      const winner=racePositions.indexOf(Math.max(...racePositions));
+      const won=winner===selectedRacer&&boosts>=state.raceConfig.minBoosts;
+      finishRace(m,state.games.find(x=>x.id===m.gameId),won,winner);
+    }
+  },80);
+}
+function finishRace(m,game,won,winnerIndex){
+  qs('#resultModal').classList.remove('hidden');
+  if(!won){
+    qs('#resultIcon').textContent='😔';qs('#resultTitle').textContent='SILAKAN COBA LAGI';
+    qs('#winnerText').textContent=`${state.raceConfig.characters[winnerIndex].name} memenangkan balapan.`;
+    qs('#prizeText').textContent='Tiket/Voucher tidak digunakan karena belum menang.';
+    logActivity(`${m.userId} kalah; inventory tidak berkurang.`,'game',m.userId);
+    qs('#playAgain').classList.toggle('hidden',availableBonusCount(m)<=0);
+    saveState();return;
+  }
+  const claim=consumeBonusItem(m);
+  if(!claim){
+    qs('#resultIcon').textContent='⚠️';qs('#resultTitle').textContent='HADIAH BELUM DAPAT DIKLAIM';
+    qs('#winnerText').textContent='Tiket/Voucher tidak tersedia.';
+    qs('#prizeText').textContent='Hubungi Admin untuk menambahkan tiket atau voucher baru.';
+    qs('#playAgain').classList.add('hidden');saveState();return;
+  }
+  qs('#resultIcon').textContent='🎁';qs('#resultTitle').textContent='SELAMAT!';
+  qs('#winnerText').textContent=`${state.raceConfig.characters[selectedRacer].name} menjadi juara.`;
+  qs('#prizeText').textContent=`Selamat kamu mendapatkan:\n${claim.reward.text}`;
+  qs('#ticketCount').textContent=claim.remaining;
+  qs('#playAgain').classList.toggle('hidden',claim.remaining<=0);
+  state.winners.unshift({
+    id:uid(),userId:m.userId,memberId:m.id,gameName:game?.name||'Mini Game',
+    prizeName:claim.reward.text,value:claim.reward.value||0,
+    winner:state.raceConfig.characters[selectedRacer].name,
+    category:m.bonusCategory,itemCode:claim.item.code,createdAt:now()
+  });
+  logActivity(`${m.userId} memenangkan ${claim.reward.text}; 1 ${categoryMeta(m.bonusCategory).unit} digunakan.`,'game',m.userId);
+  logAudit('CLAIM_BONUS',`${m.userId} · ${claim.item.code} · ${claim.reward.text}`);
+  saveState();
+}
+function remoteOperationalPayload(){
+  if(PORTAL_MODE==='admin_second'){
+    return{scope:'member_operations',role:PORTAL_MODE,data:{
+      members:state.members,bonusItems:state.bonusItems,bonusHistory:state.bonusHistory,
+      winners:state.winners,activities:state.activities,audit:state.audit
+    }};
+  }
+  return{scope:'full_access',role:PORTAL_MODE,state};
+}
+async function pushSharedDatabase(){
+  if(!sharedDatabaseReady()||remoteSyncInFlight)return;
+  remoteSyncInFlight=true;
+  try{
+    const res=await fetch(SHARED_DATABASE_API_URL,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'savePlatformState',token:SHARED_DATABASE_API_TOKEN,...remoteOperationalPayload()})
+    });
+    if(!res.ok)throw new Error('Server database menolak penyimpanan.');
+    const json=await res.json();if(json.success===false)throw new Error(json.message||'Penyimpanan server gagal.');
+  }catch(err){console.error('Shared database save:',err)}
+  finally{remoteSyncInFlight=false}
+}
+function queueRemoteSync(){
+  if(!sharedDatabaseReady())return;
+  clearTimeout(remoteSyncTimer);remoteSyncTimer=setTimeout(pushSharedDatabase,450);
+}
+async function pullSharedDatabase(){
+  if(!sharedDatabaseReady())return;
+  try{
+    const url=new URL(SHARED_DATABASE_API_URL);
+    url.searchParams.set('action','loadPlatformState');url.searchParams.set('token',SHARED_DATABASE_API_TOKEN);url.searchParams.set('role',PORTAL_MODE);url.searchParams.set('_',Date.now());
+    const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw new Error('Database bersama tidak dapat dibaca.');
+    const json=await res.json();if(json.success===false)throw new Error(json.message||'Load database gagal.');
+    if(json.state)state=migrateState(json.state);
+    else if(json.data){
+      Object.assign(state,json.data);
+    }
+    ensureRaceUpgrade();ensureBonusSystem();
+  }catch(err){console.error('Shared database load:',err)}
+}
+function saveState(){
+  try{
+    localStorage.setItem(APP_KEY,JSON.stringify(state));
+    applyThemeVars();
+    syncChannel?.postMessage({type:'STATE_UPDATED',state});
+    queueRemoteSync();
+  }catch(e){toast('Penyimpanan browser penuh. Pasang database bersama untuk data produksi.','error')}
+}
+async function bootstrapApplication(){
+  await pullSharedDatabase();
+  ensureBonusSystem();
+  saveState();
+  route();
+}
+syncChannel?.addEventListener('message',e=>{if(e.data?.type==='STATE_UPDATED'){ensureBonusSystem()}});
+
+bootstrapApplication();
 </script>
 </body>
 </html>
